@@ -1,5 +1,6 @@
 package com.example.hfc
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,7 +15,7 @@ import com.example.hfc.ui_compose.MainViewModel
 
 class MainActivity : ComponentActivity() {
 
-    val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -24,5 +25,19 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        bindService(
+            viewModel.createExplicitIntent(this),
+            viewModel.serviceConnection,
+            Context.BIND_AUTO_CREATE
+        )
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unbindService(viewModel.serviceConnection)
     }
 }
