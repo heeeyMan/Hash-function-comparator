@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.hfc.ITimeMeterHashFunctionInterface
 import com.example.hfc.models.HashFunctionTimeDataModel
-import com.example.hfc.service.CalculateService
+import com.example.hfc.service.CalculateTimeKotlinService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,7 +41,7 @@ class MainViewModel: ViewModel() {
         _inputText.value = newText
     }
 
-    fun createExplicitIntent(context: Context): Intent = Intent(context, CalculateService::class.java)
+    fun createExplicitIntent(context: Context): Intent = Intent(context, CalculateTimeKotlinService::class.java)
 
     fun getDataSpeedHashFunction(numberIterations: Int = 100000) {
         viewModelScope.launch(Dispatchers.IO) {

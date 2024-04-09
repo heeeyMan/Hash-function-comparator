@@ -2,6 +2,7 @@ package com.example.hfc
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -16,8 +17,10 @@ import com.example.hfc.ui_compose.MainViewModel
 class MainActivity : ComponentActivity() {
 
     private val viewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        System.loadLibrary("native-lib")
         setContent {
             HFCTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
@@ -25,6 +28,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        Log.d("alex", "onCreate int equal = ${getInt()}")
     }
 
     override fun onStart() {
@@ -40,4 +44,5 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
         unbindService(viewModel.serviceConnection)
     }
+    private external fun getInt(): Int
 }

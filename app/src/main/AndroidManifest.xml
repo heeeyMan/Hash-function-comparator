@@ -23,6 +23,6 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".service.CalculateService"/>
+        <service android:name=".service.CalculateTimeKotlinService"/>
     </application>
 </manifest>
