@@ -7,7 +7,7 @@ import kotlin.time.measureTimedValue
 
 object MeasureSpeedHashFunction {
 
-    fun measureRunningTimeHashFunctionNanos(message: String, numberIterations: Int = 100000): Long {
+    fun measureRunningTimeHashFunctionNanos(message: String, numberIterations: Int): Long {
         val timeValue = measureTimedValue {
             for(iteration in 0..numberIterations) {
                 encryptThisStringSHA256(message)
