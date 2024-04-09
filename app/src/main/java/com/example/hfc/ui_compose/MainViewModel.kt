@@ -64,9 +64,7 @@ class MainViewModel: ViewModel() {
 
     private fun getDataSpeedHashFunctionViaKotlinService(numberIterations: Int): String {
         val message = inputText.value
-        Log.d("alex", "getData message $message")
         val result = calculator?.measureRunningTimeHashFunction(message, numberIterations)
-        Log.d("alex", "getData result $result")
         return result.toString()
     }
     private fun getDataSpeedHashFunctionViaCppService(numberIterations: Int): String {

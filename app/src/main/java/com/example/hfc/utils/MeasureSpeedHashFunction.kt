@@ -13,7 +13,6 @@ object MeasureSpeedHashFunction {
                 encryptThisStringSHA256(message)
             }
         }
-        Log.d("alex", "measureRunningTimeHashFunction ${timeValue.value}")
         return timeValue.duration.inWholeNanoseconds / numberIterations
     }
 
