@@ -1,19 +1,19 @@
 cmake_minimum_required(VERSION 3.6.0)
 
-add_library(
+add_library (
         native-lib
         SHARED
         native-lib.cpp
-        CalculateTimeHashFunction.cpp
-
+        aidl/com/example/IMyService.cpp
 )
 
-find_library(
+target_include_directories (
         native-lib
-        log
+        PRIVATE
+        includes
 )
 
-target_link_libraries(
+target_link_libraries (
         native-lib
-        ${log_lib}
+        binder_ndk
 )

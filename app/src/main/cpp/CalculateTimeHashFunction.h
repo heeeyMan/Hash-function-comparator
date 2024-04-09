@@ -1,8 +1,5 @@
+#pragma once
 //
 // Created by Alexander on 09.04.2024.
 //
 
-#ifndef HFC_CALCULATETIMEHASHFUNCTION_H
-#define HFC_CALCULATETIMEHASHFUNCTION_H
-
-#endif //HFC_CALCULATETIMEHASHFUNCTION_H

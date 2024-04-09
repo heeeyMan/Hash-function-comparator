@@ -24,5 +24,6 @@
         </activity>
 
         <service android:name=".service.CalculateTimeKotlinService"/>
+        <service android:name=".service.CalculateTimeCppService"/>
     </application>
 </manifest>
