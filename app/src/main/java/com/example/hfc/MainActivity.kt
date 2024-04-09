@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             HFCTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    MainScreen()
+                    MainScreen(viewModel)
                 }
             }
         }

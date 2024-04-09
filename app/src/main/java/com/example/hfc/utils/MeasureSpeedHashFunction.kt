@@ -5,15 +5,16 @@ import java.math.BigInteger
 import java.security.MessageDigest
 import kotlin.time.measureTimedValue
 
-object Utils {
+object MeasureSpeedHashFunction {
 
-    fun measureRunningTimeHashFunction(message: String, numberIterations: Int = 10000): Long {
+    fun measureRunningTimeHashFunctionNanos(message: String, numberIterations: Int = 100000): Long {
         val timeValue = measureTimedValue {
             for(iteration in 0..numberIterations) {
                 encryptThisStringSHA256(message)
             }
         }
-        return timeValue.duration.inWholeNanoseconds
+        Log.d("alex", "measureRunningTimeHashFunction ${timeValue.value}")
+        return timeValue.duration.inWholeNanoseconds / numberIterations
     }
 
     // The SHA (Secure Hash Algorithm) is one of a number of cryptographic hash functions
