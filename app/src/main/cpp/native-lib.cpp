@@ -15,6 +15,6 @@ Java_com_example_hfc_service_CalculateTimeCppService_getDataSpeedHashFunctionVia
     }
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> duration = end - start;
-    double timePerIteration = duration.count() / number_iterations;
+    double timePerIteration = (duration.count() * 1000000000 )/ number_iterations;
     return timePerIteration;
 }

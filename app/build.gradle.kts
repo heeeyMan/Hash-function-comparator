@@ -22,8 +22,6 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags("-std=c++20")
-                //arguments("-Daidl_src_dir=${arrayOf(project(":Common").projectDir.absolutePath, "src", "main", "cpp", "aidl").joinToString(File.separator).replace("\\","/")}",
-                //"-Dcommon_inc_dir=${arrayOf(project(":Common").projectDir.absolutePath, "src", "main", "cpp", "includes").joinToString(File.separator).replace("\\","/")}")
             }
         }
     }
@@ -60,49 +58,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-}
 
-tasks.create("compileAidlNdk") {
-    doLast {
-        // Path to aidl tool
-        val aidl = arrayOf<String>(
-            project.android.sdkDirectory.absolutePath,
-            "build-tools", project.android.buildToolsVersion, "aidl"
-        ).joinToString(File.separator)
-
-        val outDir = arrayOf<String>(
-            project.projectDir.absolutePath, "src", "main", "cpp", "aidl"
-        ).joinToString(File.separator)
-
-        val headerOutDir = arrayOf<String>(
-            project.projectDir.absolutePath, "src", "main", "cpp", "includes"
-        ).joinToString(File.separator)
-
-        val searchPathForImports = arrayOf<String>(
-            project.projectDir.absolutePath, "src", "main", "aidl"
-        ).joinToString(File.separator)
-
-        val aidlFile = arrayOf<String>(
-            project.projectDir.absolutePath, "src", "main", "aidl",
-            "com", "example", "IMyService.aidl"
-        ).joinToString(File.separator)
-
-        // Exec aidl command to generate headers and source files for IMyService.aidl
-        ProcessBuilder(aidl,
-            "--lang=ndk",
-            "-o", outDir,
-            "-h", headerOutDir,
-            "-I", searchPathForImports,
-            aidlFile
-        ).start().waitFor()
-    }
-}
-
-// To generate headers and source files for IMyService.aidl before each build
-afterEvaluate {
-    tasks.named("preBuild") {
-        dependsOn(tasks.named("compileAidlNdk"))
-    }
 }
 
 dependencies {
@@ -115,6 +71,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.cryptography.core)
+    implementation(libs.cryptography.provider.jdk)
     // tests
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

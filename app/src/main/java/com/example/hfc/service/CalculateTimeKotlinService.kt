@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Intent
 import com.example.hfc.ITimeMeterHashFunctionInterface
 import com.example.hfc.utils.MeasureSpeedHashFunction
+import kotlin.coroutines.suspendCoroutine
 
 class CalculateTimeKotlinService: Service() {
     override fun onBind(intent: Intent?) =  object : ITimeMeterHashFunctionInterface.Stub() {

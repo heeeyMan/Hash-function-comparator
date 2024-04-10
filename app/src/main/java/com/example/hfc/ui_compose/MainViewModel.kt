@@ -92,7 +92,7 @@ class MainViewModel: ViewModel() {
     private fun getDataSpeedHashFunctionViaCppService(numberIterations: Int): String {
         val message = inputText.value
         val result = try {
-            cppCalculator?.measureRunningTimeHashFunction(message, numberIterations)
+            cppCalculator?.measureRunningTimeHashFunction(message, numberIterations)?.toLong()
         } catch (e: Exception) {
             "-1"
         }
