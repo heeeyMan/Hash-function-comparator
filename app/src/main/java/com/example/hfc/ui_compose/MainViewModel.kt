@@ -7,8 +7,11 @@ import android.content.ServiceConnection
 import android.os.IBinder
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.hfc.ITimeMeterHashFunctionCppInterface
 import com.example.hfc.ITimeMeterHashFunctionInterface
 import com.example.hfc.models.HashFunctionTimeDataModel
+import com.example.hfc.models.ServiceTypes
+import com.example.hfc.service.CalculateTimeCppService
 import com.example.hfc.service.CalculateTimeKotlinService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -26,14 +29,24 @@ class MainViewModel: ViewModel() {
     private val _isShowProgressBar = MutableStateFlow(false)
     val isShowProgressBar: StateFlow<Boolean> = _isShowProgressBar
 
-    private var calculator: ITimeMeterHashFunctionInterface? = null
+    private var kotlinCalculator: ITimeMeterHashFunctionInterface? = null
+    private var cppCalculator: ITimeMeterHashFunctionCppInterface? = null
 
-    val serviceConnection = object : ServiceConnection {
+    val kotlinServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            calculator = ITimeMeterHashFunctionInterface.Stub.asInterface(service)
+            kotlinCalculator = ITimeMeterHashFunctionInterface.Stub.asInterface(service)
         }
         override fun onServiceDisconnected(name: ComponentName?) {
-            calculator = null
+            kotlinCalculator = null
+        }
+    }
+
+    val cppServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            cppCalculator = ITimeMeterHashFunctionCppInterface.Stub.asInterface(service)
+        }
+        override fun onServiceDisconnected(name: ComponentName?) {
+            cppCalculator = null
         }
     }
 
@@ -41,7 +54,13 @@ class MainViewModel: ViewModel() {
         _inputText.value = newText
     }
 
-    fun createExplicitIntent(context: Context): Intent = Intent(context, CalculateTimeKotlinService::class.java)
+    fun createExplicitIntent(
+        context: Context,
+        type: ServiceTypes
+    ): Intent = when(type) {
+        ServiceTypes.KOTLIN -> Intent(context, CalculateTimeKotlinService::class.java)
+        ServiceTypes.CPP -> Intent(context, CalculateTimeCppService::class.java)
+    }
 
     fun getDataSpeedHashFunction(numberIterations: Int = 100000) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -63,10 +82,20 @@ class MainViewModel: ViewModel() {
 
     private fun getDataSpeedHashFunctionViaKotlinService(numberIterations: Int): String {
         val message = inputText.value
-        val result = calculator?.measureRunningTimeHashFunction(message, numberIterations)
+        val result = try {
+            kotlinCalculator?.measureRunningTimeHashFunction(message, numberIterations)
+        } catch (e: Exception) {
+            "-1"
+        }
         return result.toString()
     }
     private fun getDataSpeedHashFunctionViaCppService(numberIterations: Int): String {
-        return "0"
+        val message = inputText.value
+        val result = try {
+            cppCalculator?.measureRunningTimeHashFunction(message, numberIterations)
+        } catch (e: Exception) {
+            "-1"
+        }
+        return result.toString()
     }
 }

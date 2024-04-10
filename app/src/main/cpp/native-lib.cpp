@@ -1,28 +1,20 @@
 #include <jni.h>
-#include <aidl/com/example/hfc/ITimeMeterHashFunctionCppInterface.h>
-#include <android/binder_ibinder_jni.h>
+#include <string>
+#include <chrono>
 
-std::shared_ptr<ITimeMeterHashFunctionCppInterface> g_spMyService;
-
-class SpAIBinder;
-
-extern "C" JNIEXPORT void JNICALL
-Java_com_example_hfc_MainActivity_onServiceConnected(
-        JNIEnv* env,
-        jobject binder) {
-    AIBinder* pBinder = AIBinder_fromJavaBinder(env, binder);
-    const ::ndk::SpAIBinder spBinder(pBinder);
-    g_spMyService = ITimeMeterHashFunctionCppInterface::fromBinder(spBinder);
-}
-
-extern "C" JNIEXPORT void JNICALL
-Java_com_example_hfc_MainActivity_onServiceDisconnected(
-        JNIEnv* env) {
-    g_spMyService = nullptr;
-}
-
-extern "C" JNIEXPORT void JNICALL
-Java_com_example_hfc_MainActivity_talkToService(
-        JNIEnv* env) {
-    //ScopedAStatus returnComplexTypeResult = g_spMyService->returnComplexType(2021,65535000, true, 3.14f, 3.141592653589793238"Hello, World!", &returnedComplexObject);
+extern "C"
+JNIEXPORT jdouble JNICALL
+Java_com_example_hfc_service_CalculateTimeCppService_getDataSpeedHashFunctionViaCpp(JNIEnv *env,
+                                                                                    jobject thiz,
+                                                                                    jstring message,
+                                                                                    jint number_iterations) {
+    //unsigned char hash[SHA256_DIGEST_LENGTH];
+    auto start = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < number_iterations; ++i) {
+        //SHA256((const unsigned char*)data.c_str(), data.length(), hash);
+    }
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> duration = end - start;
+    double timePerIteration = duration.count() / number_iterations;
+    return timePerIteration;
 }

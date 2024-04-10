@@ -4,16 +4,18 @@ add_library (
         native-lib
         SHARED
         native-lib.cpp
-        aidl/com/example/IMyService.cpp
 )
 
-target_include_directories (
-        native-lib
-        PRIVATE
-        includes
+find_library(
+        log-lib
+        log
 )
 
-target_link_libraries (
+add_library(ssl STATIC IMPORTED)
+set_target_properties(ssl
+        PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/libssl.a)
+
+target_link_libraries(
         native-lib
-        binder_ndk
+        ${log-lib}
 )
