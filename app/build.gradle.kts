@@ -21,7 +21,8 @@ android {
 
         externalNativeBuild {
             cmake {
-                cppFlags("-std=c++20")
+                cppFlags("-std=c++17")
+                arguments.add("-DANDROID_STL=c++_shared")
             }
         }
     }
@@ -39,6 +40,7 @@ android {
             version = "3.6.0"
         }
     }
+    buildFeatures.prefab = true
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -71,6 +73,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    //openssl
+    implementation (libs.openssl)
     implementation(libs.cryptography.core)
     implementation(libs.cryptography.provider.jdk)
     // tests
