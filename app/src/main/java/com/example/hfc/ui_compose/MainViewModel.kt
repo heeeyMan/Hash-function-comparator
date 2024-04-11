@@ -62,7 +62,7 @@ class MainViewModel: ViewModel() {
         ServiceTypes.CPP -> Intent(context, CalculateTimeCppService::class.java)
     }
 
-    fun getDataSpeedHashFunction(numberIterations: Int = 100000) {
+    fun getDataSpeedHashFunction(numberIterations: Int = 1000000) {
         viewModelScope.launch(Dispatchers.IO) {
             _isShowProgressBar.emit(true)
             val workingTimeCppFunc = async(Dispatchers.Default) {
