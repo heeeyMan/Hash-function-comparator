@@ -31,6 +31,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -43,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -189,16 +191,20 @@ fun MultiplierExposedDropdownMenuBox(
                 expanded = !expanded
             }
         ) {
-            TextField(
-                value = selectedText.toString(),
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier.menuAnchor(),
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.None
+            CompositionLocalProvider(
+                LocalTextInputService provides null
+            ) {
+                TextField(
+                    value = selectedText.toString(),
+                    onValueChange = {},
+                    readOnly = true,
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                    modifier = Modifier.menuAnchor(),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.None
+                    )
                 )
-            )
+            }
 
             ExposedDropdownMenu(
                 expanded = expanded,
@@ -242,17 +248,21 @@ fun ServiceExposedDropdownMenuBox(
             }
         ) {
             val keyboardController = LocalSoftwareKeyboardController.current
-            TextField(
-                value = stringResource(id = selectedText.valueNameId),
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier
-                    .menuAnchor(),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done, keyboardType = KeyboardType.Text),
-                keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }),
-                singleLine = true
-            )
+            CompositionLocalProvider(
+                LocalTextInputService provides null
+            ) {
+                TextField(
+                    value = stringResource(id = selectedText.valueNameId),
+                    onValueChange = {},
+                    readOnly = true,
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                    modifier = Modifier
+                        .menuAnchor(),
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done, keyboardType = KeyboardType.Text),
+                    keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }),
+                    singleLine = true
+                )
+            }
 
             ExposedDropdownMenu(
                 expanded = expanded,
