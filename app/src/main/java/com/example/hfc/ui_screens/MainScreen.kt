@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -62,58 +63,60 @@ import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(35.dp))
-        TableResult(
-            timeCppData = viewModel.workingCppTimeText,
-            timeKotlinData = viewModel.workingKotlinTimeText,
-            isShowCppProgressBar = viewModel.isShowCppProgressBar,
-            isShowKotlinProgressBar = viewModel.isShowKotlinProgressBar
-        )
-        Spacer(modifier = Modifier.height(15.dp))
-        Counter(
-            textState = viewModel.inputText,
-            multiplierState = viewModel.currentMultiplier,
-            isPrepareState = viewModel.isPrepareState
-        )
-        InputEditText(
-            inputTextState = viewModel.inputText,
-            changeInputText = {viewModel.changeInputText(it)}
-        )
-        Spacer(modifier = Modifier.height(15.dp))
-        Text(
-            text = stringResource(id = R.string.current_multiplier),
-            color = Color.Black,
-            fontWeight = FontWeight.Bold
-        )
-        MultiplierExposedDropdownMenuBox(
-            currentMultiplier = viewModel.currentMultiplier,
-            multipliers = viewModel.multipliers,
-            changeMultiplier = {viewModel.changeMultiplier(it)}
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        Text(
-            text = stringResource(id = R.string.current_service),
-            color = Color.Black,
-            fontWeight = FontWeight.Bold
-        )
-        ServiceExposedDropdownMenuBox(
-            currentServiceType = viewModel.currentServiceType,
-            serviceTypes = viewModel.serviceTypes,
-            changeCurrentServiceType = {viewModel.changeServiceType(it)}
-        )
-        Spacer(modifier = Modifier.height(25.dp))
-        CalculateButton(
-            isKotlinActiveState = viewModel.isShowKotlinProgressBar,
-            isCppActiveState = viewModel.isShowCppProgressBar,
-            isPrepareState = viewModel.isPrepareState
-        ) {
-            viewModel.getTimeHashFunction()
+        item {
+            Spacer(modifier = Modifier.height(35.dp))
+            TableResult(
+                timeCppData = viewModel.workingCppTimeText,
+                timeKotlinData = viewModel.workingKotlinTimeText,
+                isShowCppProgressBar = viewModel.isShowCppProgressBar,
+                isShowKotlinProgressBar = viewModel.isShowKotlinProgressBar
+            )
+            Spacer(modifier = Modifier.height(15.dp))
+            Counter(
+                textState = viewModel.inputText,
+                multiplierState = viewModel.currentMultiplier,
+                isPrepareState = viewModel.isPrepareState
+            )
+            InputEditText(
+                inputTextState = viewModel.inputText,
+                changeInputText = {viewModel.changeInputText(it)}
+            )
+            Spacer(modifier = Modifier.height(15.dp))
+            Text(
+                text = stringResource(id = R.string.current_multiplier),
+                color = Color.Black,
+                fontWeight = FontWeight.Bold
+            )
+            MultiplierExposedDropdownMenuBox(
+                currentMultiplier = viewModel.currentMultiplier,
+                multipliers = viewModel.multipliers,
+                changeMultiplier = {viewModel.changeMultiplier(it)}
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = stringResource(id = R.string.current_service),
+                color = Color.Black,
+                fontWeight = FontWeight.Bold
+            )
+            ServiceExposedDropdownMenuBox(
+                currentServiceType = viewModel.currentServiceType,
+                serviceTypes = viewModel.serviceTypes,
+                changeCurrentServiceType = {viewModel.changeServiceType(it)}
+            )
+            Spacer(modifier = Modifier.height(25.dp))
+            CalculateButton(
+                isKotlinActiveState = viewModel.isShowKotlinProgressBar,
+                isCppActiveState = viewModel.isShowCppProgressBar,
+                isPrepareState = viewModel.isPrepareState
+            ) {
+                viewModel.getTimeHashFunction()
+            }
         }
     }
 }
@@ -404,7 +407,7 @@ fun CalculateButton(
         modifier= Modifier
             .fillMaxWidth()
             .height(70.dp)
-            .padding(horizontal = 20.dp)
+            .padding(horizontal = 20.dp, vertical = 10.dp)
             .then(modifier),
         shape = RoundedCornerShape(12.dp),
         border= BorderStroke(
