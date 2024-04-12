@@ -18,8 +18,8 @@ object HashFunction {
         0x748f82eeu, 0x78a5636fu, 0x84c87814u, 0x8cc70208u, 0x90befffau, 0xa4506cebu, 0xbef9a3f7u, 0xc67178f2u
     )
 
-    private var m_blocklen: UInt = 0u
-    private var m_bitlen: ULong = 0u
+    private var blocklen: UInt = 0u
+    private var bitlen: ULong = 0u
     @OptIn(ExperimentalUnsignedTypes::class)
     private val m_state: UIntArray = uintArrayOf(
         0x6a09e667u, 0xbb67ae85u, 0x3c6ef372u, 0xa54ff53au,
@@ -28,21 +28,21 @@ object HashFunction {
     @OptIn(ExperimentalUnsignedTypes::class)
     private val m_data: UByteArray = UByteArray(64)
 
-    fun update(data: String) {
-        update(data.toByteArray(), data.length)
-    }
-
     @OptIn(ExperimentalUnsignedTypes::class)
     fun update(data: ByteArray, length: Int) {
         for (i in 0 until length) {
-            m_data[m_blocklen.toInt()] = data[i].toUByte()
-            m_blocklen++
-            if (m_blocklen == 64u) {
+            m_data[blocklen.toInt()] = data[i].toUByte()
+            blocklen++
+            if (blocklen == 64u) {
                 transform()
-                m_bitlen += 512u
-                m_blocklen = 0u
+                bitlen += 512u
+                blocklen = 0u
             }
         }
+    }
+
+    private fun update(data: String) {
+        update(data.toByteArray(), data.length)
     }
 
     @OptIn(ExperimentalUnsignedTypes::class)
@@ -87,7 +87,7 @@ object HashFunction {
         }
     }
 
-    fun digest(): ByteArray {
+    private fun digest(): ByteArray {
         val hash = ByteArray(32)
         pad()
         revert(hash)
@@ -116,28 +116,28 @@ object HashFunction {
 
     @OptIn(ExperimentalUnsignedTypes::class)
     private fun pad() {
-        var i = m_blocklen.toInt()
-        val end = if (m_blocklen < 56u) 56 else 64
+        var i = blocklen.toInt()
+        val end = if (blocklen < 56u) 56 else 64
 
         m_data[i++] = 0x80u // Append a bit 1
         while (i < end) {
             m_data[i++] = 0x00u // Pad with zeros
         }
 
-        if (m_blocklen >= 56u) {
+        if (blocklen >= 56u) {
             transform()
             m_data.fill(0u, 0, 56)
         }
 
-        m_bitlen += m_blocklen * 8u
-        m_data[63] = m_bitlen.toUByte()
-        m_data[62] = (m_bitlen shr 8).toUByte()
-        m_data[61] = (m_bitlen shr 16).toUByte()
-        m_data[60] = (m_bitlen shr 24).toUByte()
-        m_data[59] = (m_bitlen shr 32).toUByte()
-        m_data[58] = (m_bitlen shr 40).toUByte()
-        m_data[57] = (m_bitlen shr 48).toUByte()
-        m_data[56] = (m_bitlen shr 56).toUByte()
+        bitlen += blocklen * 8u
+        m_data[63] = bitlen.toUByte()
+        m_data[62] = (bitlen shr 8).toUByte()
+        m_data[61] = (bitlen shr 16).toUByte()
+        m_data[60] = (bitlen shr 24).toUByte()
+        m_data[59] = (bitlen shr 32).toUByte()
+        m_data[58] = (bitlen shr 40).toUByte()
+        m_data[57] = (bitlen shr 48).toUByte()
+        m_data[56] = (bitlen shr 56).toUByte()
         transform()
     }
     @OptIn(ExperimentalUnsignedTypes::class)
@@ -147,11 +147,5 @@ object HashFunction {
                 hash[i + (j * 4)] = ((m_state[j] shr (24 - i * 8)) and 255u).toByte()
             }
         }
-    }
-
-    fun toString(digest: ByteArray): String {
-        val s = StringBuilder()
-        s.append(digest.joinToString("") { "%02X".format(it) })
-        return s.toString()
     }
 }
