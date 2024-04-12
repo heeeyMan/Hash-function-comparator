@@ -1,4 +1,4 @@
-package com.example.hfc.ui_compose
+package com.example.hfc.ui_screens
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke

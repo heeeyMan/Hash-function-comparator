@@ -13,8 +13,8 @@ import com.example.hfc.models.MainModel
 import com.example.hfc.service.CalculateTimeCppService
 import com.example.hfc.service.CalculateTimeKotlinService
 import com.example.hfc.ui.theme.HFCTheme
-import com.example.hfc.ui_compose.MainScreen
-import com.example.hfc.ui_compose.MainViewModel
+import com.example.hfc.ui_screens.MainScreen
+import com.example.hfc.ui_screens.MainViewModel
 
 class MainActivity : ComponentActivity() {
 

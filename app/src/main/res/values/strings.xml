@@ -8,7 +8,6 @@
     <string name="current_multiplier">Действующий множитель</string>
     <string name="multiplier_value">Множитель равен: %1$s </string>
     <string name="count_elements">Количество символов: %1$s </string>
-
     <string name="cpp_name">C++</string>
     <string name="kotlin_name">Kotlin</string>
     <string name="kotlin_and_cpp_name">Kotlin &amp; C++</string>
