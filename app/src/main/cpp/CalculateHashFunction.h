@@ -2,8 +2,8 @@
 // Created by alexander on 4/11/24.
 //
 
-#ifndef HFC_SHA256_H
-#define HFC_SHA256_H
+#ifndef HFC_CALCULATEHASHFUNCTION_H
+#define HFC_CALCULATEHASHFUNCTION_H
 
 #include <jni.h>
 #include <string>
@@ -13,10 +13,11 @@
 #include <sstream>
 #include <iomanip>
 
-class Sha256 {
+class CalculateHashFunction {
 
 public:
-    Sha256();
+    CalculateHashFunction();
+
     void update(const std::string &data);
     void update(const uint8_t * data, size_t length);
     std::array<uint8_t, 32> digest();
@@ -57,4 +58,4 @@ private:
     void revert(std::array<uint8_t, 32> & hash);
 };
 
-#endif //HFC_SHA256_H
+#endif //HFC_CALCULATEHASHFUNCTION_H

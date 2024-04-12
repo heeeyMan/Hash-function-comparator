@@ -9,7 +9,7 @@ add_library (
 add_library (
         sha-lib
         SHARED
-        Sha256.cpp
+        CalculateHashFunction.cpp
 )
 
 add_library (

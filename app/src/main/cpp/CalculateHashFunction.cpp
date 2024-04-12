@@ -1,7 +1,7 @@
-#include "Sha256.h"
-constexpr std::array<uint32_t, 64> Sha256::K;
+#include "CalculateHashFunction.h"
+constexpr std::array<uint32_t, 64> CalculateHashFunction::K;
 
-Sha256::Sha256(): m_blocklen(0), m_bitlen(0) {
+CalculateHashFunction::CalculateHashFunction(): m_blocklen(0), m_bitlen(0) {
     m_state[0] = 0x6a09e667;
     m_state[1] = 0xbb67ae85;
     m_state[2] = 0x3c6ef372;
@@ -12,7 +12,7 @@ Sha256::Sha256(): m_blocklen(0), m_bitlen(0) {
     m_state[7] = 0x5be0cd19;
 }
 
-void Sha256::update(const uint8_t * data, size_t length) {
+void CalculateHashFunction::update(const uint8_t * data, size_t length) {
     for (size_t i = 0 ; i < length ; i++) {
         m_data[m_blocklen++] = data[i];
         if (m_blocklen == 64) {
@@ -25,11 +25,11 @@ void Sha256::update(const uint8_t * data, size_t length) {
     }
 }
 
-void Sha256::update(const std::string &data) {
+void CalculateHashFunction::update(const std::string &data) {
     update(reinterpret_cast<const uint8_t*> (data.c_str()), data.size());
 }
 
-std::array<uint8_t,32> Sha256::digest() {
+std::array<uint8_t,32> CalculateHashFunction::digest() {
     std::array<uint8_t,32> hash;
 
     pad();
@@ -38,27 +38,27 @@ std::array<uint8_t,32> Sha256::digest() {
     return hash;
 }
 
-uint32_t Sha256::rotr(uint32_t x, uint32_t n) {
+uint32_t CalculateHashFunction::rotr(uint32_t x, uint32_t n) {
     return (x >> n) | (x << (32 - n));
 }
 
-uint32_t Sha256::choose(uint32_t e, uint32_t f, uint32_t g) {
+uint32_t CalculateHashFunction::choose(uint32_t e, uint32_t f, uint32_t g) {
     return (e & f) ^ (~e & g);
 }
 
-uint32_t Sha256::majority(uint32_t a, uint32_t b, uint32_t c) {
+uint32_t CalculateHashFunction::majority(uint32_t a, uint32_t b, uint32_t c) {
     return (a & (b | c)) | (b & c);
 }
 
-uint32_t Sha256::sig0(uint32_t x) {
-    return Sha256::rotr(x, 7) ^ Sha256::rotr(x, 18) ^ (x >> 3);
+uint32_t CalculateHashFunction::sig0(uint32_t x) {
+    return CalculateHashFunction::rotr(x, 7) ^ CalculateHashFunction::rotr(x, 18) ^ (x >> 3);
 }
 
-uint32_t Sha256::sig1(uint32_t x) {
-    return Sha256::rotr(x, 17) ^ Sha256::rotr(x, 19) ^ (x >> 10);
+uint32_t CalculateHashFunction::sig1(uint32_t x) {
+    return CalculateHashFunction::rotr(x, 17) ^ CalculateHashFunction::rotr(x, 19) ^ (x >> 10);
 }
 
-void Sha256::transform() {
+void CalculateHashFunction::transform() {
     uint32_t maj, xorA, ch, xorE, sum, newA, newE, m[64];
     uint32_t state[8];
 
@@ -67,7 +67,7 @@ void Sha256::transform() {
     }
 
     for (uint8_t k = 16 ; k < 64; k++) { // Remaining 48 blocks
-        m[k] = Sha256::sig1(m[k - 2]) + m[k - 7] + Sha256::sig0(m[k - 15]) + m[k - 16];
+        m[k] = CalculateHashFunction::sig1(m[k - 2]) + m[k - 7] + CalculateHashFunction::sig0(m[k - 15]) + m[k - 16];
     }
 
     for(uint8_t i = 0 ; i < 8 ; i++) {
@@ -75,12 +75,12 @@ void Sha256::transform() {
     }
 
     for (uint8_t i = 0; i < 64; i++) {
-        maj   = Sha256::majority(state[0], state[1], state[2]);
-        xorA  = Sha256::rotr(state[0], 2) ^ Sha256::rotr(state[0], 13) ^ Sha256::rotr(state[0], 22);
+        maj   = CalculateHashFunction::majority(state[0], state[1], state[2]);
+        xorA  = CalculateHashFunction::rotr(state[0], 2) ^ CalculateHashFunction::rotr(state[0], 13) ^ CalculateHashFunction::rotr(state[0], 22);
 
         ch = choose(state[4], state[5], state[6]);
 
-        xorE  = Sha256::rotr(state[4], 6) ^ Sha256::rotr(state[4], 11) ^ Sha256::rotr(state[4], 25);
+        xorE  = CalculateHashFunction::rotr(state[4], 6) ^ CalculateHashFunction::rotr(state[4], 11) ^ CalculateHashFunction::rotr(state[4], 25);
 
         sum  = m[i] + K[i] + state[7] + ch + xorE;
         newA = xorA + maj + sum;
@@ -101,7 +101,7 @@ void Sha256::transform() {
     }
 }
 
-void Sha256::pad() {
+void CalculateHashFunction::pad() {
 
     uint64_t i = m_blocklen;
     uint8_t end = m_blocklen < 56 ? 56 : 64;
@@ -129,7 +129,7 @@ void Sha256::pad() {
     transform();
 }
 
-void Sha256::revert(std::array<uint8_t, 32> & hash) {
+void CalculateHashFunction::revert(std::array<uint8_t, 32> & hash) {
     // SHA uses big endian byte ordering
     // Revert all bytes
     for (uint8_t i = 0 ; i < 4 ; i++) {
@@ -139,7 +139,7 @@ void Sha256::revert(std::array<uint8_t, 32> & hash) {
     }
 }
 
-std::string Sha256::toString(const std::array<uint8_t, 32> & digest) {
+std::string CalculateHashFunction::toString(const std::array<uint8_t, 32> & digest) {
     std::stringstream s;
     s << std::setfill('0') << std::hex;
 

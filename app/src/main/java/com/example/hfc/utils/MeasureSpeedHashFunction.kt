@@ -1,5 +1,6 @@
 package com.example.hfc.utils
 
+import com.example.hfc.utils.CalculateHashFunction.calculateFunction
 import java.math.BigInteger
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -10,7 +11,7 @@ object MeasureSpeedHashFunction {
     fun measureRunningTimeHashFunctionNanos(message: String, numberIterations: Int): Long {
         val timeValue = measureTimedValue {
             for(iteration in 0..numberIterations) {
-                encryptThisString(message)
+                calculateFunction(message)
             }
         }
         return timeValue.duration.inWholeNanoseconds / numberIterations
