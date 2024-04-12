@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.hfc.R
 import com.example.hfc.data_models.ServiceTypes
+import com.example.hfc.utils.clearFocusOnKeyboardDismiss
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
@@ -289,11 +290,11 @@ fun InputEditText(
             onValueChange = {
                 changeInputText(it)
             },
-            keyboardActions = KeyboardActions {  },
             label = { Text(stringResource(id = R.string.input_text_placeholder)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp)
+                .clearFocusOnKeyboardDismiss()
                 .then(modifier),
             textStyle = TextStyle(
                 color = Color.Black,
