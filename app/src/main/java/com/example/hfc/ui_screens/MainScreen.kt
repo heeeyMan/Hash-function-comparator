@@ -3,6 +3,7 @@ package com.example.hfc.ui_screens
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
@@ -25,7 +26,9 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.collectAsState
@@ -40,7 +43,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -279,16 +284,31 @@ fun InputEditText(
 ) {
     val text by inputTextState.collectAsState()
     Box {
-        TextField(
+        OutlinedTextField(
             value = text,
             onValueChange = {
                 changeInputText(it)
             },
+            keyboardActions = KeyboardActions {  },
             label = { Text(stringResource(id = R.string.input_text_placeholder)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp)
-                .then(modifier)
+                .then(modifier),
+            textStyle = TextStyle(
+                color = Color.Black,
+                fontSize = 17.sp
+            ),
+            trailingIcon = {
+                if(text.isNotEmpty())
+                    Icon(
+                        painter = painterResource(id = R.drawable.cancel_icon),
+                        contentDescription = null,
+                        modifier = Modifier.clickable {
+                            changeInputText("")
+                        }
+                    )
+            }
         )
     }
 }
