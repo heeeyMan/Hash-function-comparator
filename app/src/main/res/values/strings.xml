@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">HFC</string>
+    <string name="cpp_time">Время C++,нс</string>
+    <string name="kotlin_time">Время Kotlin,нс</string>
+    <string name="input_text_placeholder">Введите message для hash функции</string>
+    <string name="calculate_button_text">Рассчитать скорость функции</string>
+    <string name="current_service">Действующий сервис</string>
 </resources>

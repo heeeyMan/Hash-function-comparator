@@ -1,6 +1,6 @@
-package com.example.hfc.utils
+package com.example.hfc.calculate
 
-object CalculateHashFunction {
+object HashFunction {
 
     fun calculateFunction(message: String): String {
         update(message)

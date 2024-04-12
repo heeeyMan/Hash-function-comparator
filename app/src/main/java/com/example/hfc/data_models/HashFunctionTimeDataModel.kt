@@ -1,4 +1,4 @@
-package com.example.hfc.models
+package com.example.hfc.data_models
 
 data class HashFunctionTimeDataModel(
     val workingTimeCppFunc: String = "",
