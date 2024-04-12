@@ -28,6 +28,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,7 +53,7 @@ fun MainScreen(viewModel: MainViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.LightGray),
+            .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(35.dp))
@@ -63,15 +64,32 @@ fun MainScreen(viewModel: MainViewModel) {
             isShowKotlinProgressBar = viewModel.isShowKotlinProgressBar
         )
         Spacer(modifier = Modifier.height(15.dp))
+        Counter(
+            textState = viewModel.inputText,
+            multiplierState = viewModel.currentMultiplier,
+            isPrepareState = viewModel.isPrepareState
+        )
         InputEditText(
             inputTextState = viewModel.inputText,
             changeInputText = {viewModel.changeInputText(it)}
         )
         Spacer(modifier = Modifier.height(15.dp))
         Text(
-            text = stringResource(id = R.string.current_service),
-            color = Color.Black
+            text = stringResource(id = R.string.current_multiplier),
+            color = Color.Black,
+            fontWeight = FontWeight.Bold
         )
+        MultiplierExposedDropdownMenuBox(
+            currentMultiplier = viewModel.currentMultiplier,
+            multipliers = viewModel.multipliers,
+            changeMultiplier = {viewModel.changeMultiplier(it)}
+        )
+        Text(
+            text = stringResource(id = R.string.current_service),
+            color = Color.Black,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(10.dp))
         CustomExposedDropdownMenuBox(
             currentServiceType = viewModel.currentServiceType,
             serviceTypes = viewModel.serviceTypes,
@@ -80,9 +98,38 @@ fun MainScreen(viewModel: MainViewModel) {
         Spacer(modifier = Modifier.height(25.dp))
         CalculateButton(
             isKotlinActiveState = viewModel.isShowKotlinProgressBar,
-            isCppActiveState = viewModel.isShowCppProgressBar
+            isCppActiveState = viewModel.isShowCppProgressBar,
+            isPrepareState = viewModel.isPrepareState
         ) {
             viewModel.getTimeHashFunction()
+        }
+    }
+}
+
+@Composable
+fun Counter(
+    textState: StateFlow<String>,
+    multiplierState: StateFlow<Int>,
+    isPrepareState: StateFlow<Boolean>
+) {
+    val text by textState.collectAsState()
+    val multiplier by multiplierState.collectAsState()
+    val isPrepare by isPrepareState.collectAsState()
+    val count by remember {
+        derivedStateOf {
+            text.length * multiplier
+        }
+    }
+    Row {
+        Text(
+            text = stringResource(id = R.string.count_elements, count.toString()),
+            color = Color.Black,
+            fontSize = 12.sp
+        )
+        if(isPrepare) {
+            CustomCircularProgressBar(
+                modifier = Modifier.size(10.dp)
+            )
         }
     }
 }
@@ -111,6 +158,58 @@ private fun TableResult(
             modifier = Modifier.weight(1f),
             isShowProgressBarState = isShowKotlinProgressBar
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MultiplierExposedDropdownMenuBox(
+    currentMultiplier: StateFlow<Int>,
+    multipliers: Array<Int>,
+    changeMultiplier: (type: Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    var expanded by remember { mutableStateOf(false) }
+    val selectedText by currentMultiplier.collectAsState()
+    Box(modifier = modifier) {
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = {
+                expanded = !expanded
+            }
+        ) {
+            TextField(
+                value = selectedText.toString(),
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                modifier = Modifier.menuAnchor(),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.None
+                )
+            )
+
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                multipliers.forEach { item ->
+                    DropdownMenuItem(
+                        text = { Text(text = item.toString()) },
+                        onClick = {
+                            changeMultiplier(item)
+                            expanded = false
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.multiplier_value, item.toString()),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -195,13 +294,13 @@ fun StaticTextField(
     val text by messageState.collectAsState()
     Column(
         modifier = Modifier
-            .background(Color.LightGray)
+            .background(Color.White)
             .then(modifier)
     ) {
         Text(
             text = headerText,
             modifier = Modifier
-                .background(color = Color.LightGray)
+                .background(color = Color.White)
                 .align(Alignment.CenterHorizontally),
             fontSize = 20.sp,
             fontWeight = FontWeight.Light,
@@ -214,7 +313,7 @@ fun StaticTextField(
             .fillMaxWidth()
             .padding(10.dp)
             .background(
-                color = Color.White,
+                color = Color.LightGray,
                 shape = RoundedCornerShape(12.dp)
             )
             .padding(vertical = 10.dp, horizontal = 20.dp)
@@ -241,9 +340,7 @@ private fun CustomCircularProgressBar(
     modifier: Modifier = Modifier
 ) {
     CircularProgressIndicator(
-        modifier = Modifier
-            .size(30.dp)
-            .then(modifier),
+        modifier = modifier,
         color = Color.Black,
         strokeWidth = 2.dp)
 
@@ -253,15 +350,17 @@ private fun CustomCircularProgressBar(
 fun CalculateButton(
     isKotlinActiveState: StateFlow<Boolean>,
     isCppActiveState: StateFlow<Boolean>,
+    isPrepareState: StateFlow<Boolean>,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-    val isKotlinActive by isKotlinActiveState.collectAsState()
-    val isCppActive by isCppActiveState.collectAsState()
-    val isActive = !isKotlinActive || !isCppActive
+    val isKotlinQueryActive by isKotlinActiveState.collectAsState()
+    val isCppQueryActive by isCppActiveState.collectAsState()
+    val isPrepare by isPrepareState.collectAsState()
+    val isActive = !isKotlinQueryActive && !isCppQueryActive && !isPrepare
     OutlinedButton(
         onClick = onClick,
-        enabled = !isKotlinActive,
+        enabled = !isKotlinQueryActive,
         modifier= Modifier
             .fillMaxWidth()
             .height(70.dp)

@@ -13,6 +13,8 @@ import kotlinx.coroutines.launch
 class MainViewModel(
     private val model: IMainModel
 ): ViewModel() {
+    val multipliers = arrayOf(1, 10, 100, 1000, 10000)
+    val serviceTypes = ServiceTypes.entries.toTypedArray()
     private val _inputText = MutableStateFlow("")
     val inputText: StateFlow<String> = _inputText
 
@@ -28,10 +30,18 @@ class MainViewModel(
     private val _isShowCppProgressBar = MutableStateFlow(false)
     val isShowCppProgressBar: StateFlow<Boolean> = _isShowCppProgressBar
 
-    private var _currentServiceType: MutableStateFlow<ServiceTypes> = MutableStateFlow(ServiceTypes.KOTLIN_AND_CPP)
+    private var _currentServiceType: MutableStateFlow<ServiceTypes> = MutableStateFlow(serviceTypes[0])
     val currentServiceType: StateFlow<ServiceTypes> = _currentServiceType
-    val serviceTypes = ServiceTypes.entries.toTypedArray()
 
+    private var _currentMultiplier: MutableStateFlow<Int> = MutableStateFlow(multipliers[0])
+    val currentMultiplier: StateFlow<Int> = _currentMultiplier
+
+    private val _isPrepareState = MutableStateFlow(false)
+    val isPrepareState: StateFlow<Boolean> = _isPrepareState
+
+    fun changeMultiplier(value: Int) {
+        _currentMultiplier.value = value
+    }
     fun changeServiceType(type: ServiceTypes) {
         _currentServiceType.value = type
     }
@@ -43,24 +53,49 @@ class MainViewModel(
     fun getTimeHashFunction(
         numberIterations: Int = 100000
     ) {
-        when(currentServiceType.value) {
-            ServiceTypes.CPP -> getTimeCppHashFunction(numberIterations)
-            ServiceTypes.KOTLIN -> getTimeKotlinHashFunction(numberIterations)
-            ServiceTypes.KOTLIN_AND_CPP -> getTimeAllHashFunction(numberIterations)
+        viewModelScope.launch {
+            val message = prepareMessage()
+            when(currentServiceType.value) {
+                ServiceTypes.CPP -> getTimeCppHashFunction(message, numberIterations)
+                ServiceTypes.KOTLIN -> getTimeKotlinHashFunction(message, numberIterations)
+                ServiceTypes.KOTLIN_AND_CPP -> getTimeAllHashFunction(message, numberIterations)
+            }
         }
     }
 
-    private fun getTimeAllHashFunction(numberIterations: Int = 100000) {
-        getTimeKotlinHashFunction(numberIterations)
-        getTimeCppHashFunction(numberIterations)
+    private suspend fun prepareMessage(): String {
+        _isPrepareState.emit(true)
+        if(currentMultiplier.value == 1) {
+            _isPrepareState.emit(false)
+            return inputText.value
+        }
+        var message = inputText.value
+        return viewModelScope.async(Dispatchers.IO) {
+            for(index in 0..currentMultiplier.value) {
+                message += inputText.value
+            }
+            _isPrepareState.emit(false)
+            message
+        }.await()
     }
 
-    private fun getTimeKotlinHashFunction(numberIterations: Int = 100000) {
+    private fun getTimeAllHashFunction(
+        message: String,
+        numberIterations: Int = 100000
+    ) {
+        getTimeKotlinHashFunction(message, numberIterations)
+        getTimeCppHashFunction(message, numberIterations)
+    }
+
+    private fun getTimeKotlinHashFunction(
+        message: String,
+        numberIterations: Int = 100000
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             _isShowKotlinProgressBar.emit(true)
             val workingTimeKotlinFunc = async {
                 model.getDataSpeedHashFunctionViaKotlinService(
-                    text = inputText.value,
+                    text = message,
                     numberIterations = numberIterations
                 )
             }
@@ -69,12 +104,15 @@ class MainViewModel(
         }
     }
 
-    private fun getTimeCppHashFunction(numberIterations: Int = 100000) {
+    private fun getTimeCppHashFunction(
+        message: String,
+        numberIterations: Int = 100000
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             _isShowCppProgressBar.emit(true)
             val workingTimeCppFunc = async {
                 model.getDataSpeedHashFunctionViaCppService(
-                    text = inputText.value,
+                    text = message,
                     numberIterations = numberIterations
                 )
             }

@@ -3,6 +3,7 @@ package com.example.hfc.models
 import android.content.ComponentName
 import android.content.ServiceConnection
 import android.os.IBinder
+import android.util.Log
 import com.example.hfc.ITimeMeterHashFunctionCppInterface
 import com.example.hfc.ITimeMeterHashFunctionInterface
 
@@ -30,6 +31,7 @@ class MainModel: IMainModel {
         val result = try {
             _kotlinCalculator?.measureRunningTimeHashFunction(text, numberIterations)
         } catch (e: Exception) {
+            Log.d("alex", "getDataSpeedHashFunctionViaKotlinService error $e")
             "-1"
         }
         return result.toString()
@@ -39,6 +41,7 @@ class MainModel: IMainModel {
         val result = try {
             _cppCalculator?.measureRunningTimeHashFunction(text, numberIterations)?.toLong()
         } catch (e: Exception) {
+            Log.d("alex", "getDataSpeedHashFunctionViaCppService error $e")
             "-1"
         }
         return result.toString()
