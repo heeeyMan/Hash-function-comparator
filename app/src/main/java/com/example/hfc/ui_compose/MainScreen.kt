@@ -92,9 +92,11 @@ private fun TableResult(
     timeCppData: StateFlow<String>,
     timeKotlinData: StateFlow<String>,
     isShowKotlinProgressBar: StateFlow<Boolean>,
-    isShowCppProgressBar: StateFlow<Boolean>
+    isShowCppProgressBar: StateFlow<Boolean>,
+    modifier: Modifier = Modifier
 ) {
     Row(
+        modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         StaticTextField(
@@ -117,12 +119,13 @@ private fun TableResult(
 fun CustomExposedDropdownMenuBox(
     currentServiceType: StateFlow<ServiceTypes>,
     serviceTypes: Array<ServiceTypes>,
-    changeCurrentServiceType: (type: ServiceTypes) -> Unit
+    changeCurrentServiceType: (type: ServiceTypes) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
     val selectedText by currentServiceType.collectAsState()
-    Box {
+    Box(modifier = modifier) {
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = {
@@ -162,7 +165,8 @@ fun CustomExposedDropdownMenuBox(
 @Composable
 fun InputEditText(
     inputTextState: StateFlow<String>,
-    changeInputText: (text: String) -> Unit
+    changeInputText: (text: String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val text by inputTextState.collectAsState()
     Box {
@@ -175,6 +179,7 @@ fun InputEditText(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp)
+                .then(modifier)
         )
     }
 }
@@ -248,6 +253,7 @@ private fun CustomCircularProgressBar(
 fun CalculateButton(
     isKotlinActiveState: StateFlow<Boolean>,
     isCppActiveState: StateFlow<Boolean>,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
     val isKotlinActive by isKotlinActiveState.collectAsState()
@@ -259,7 +265,8 @@ fun CalculateButton(
         modifier= Modifier
             .fillMaxWidth()
             .height(70.dp)
-            .padding(horizontal = 20.dp),
+            .padding(horizontal = 20.dp)
+            .then(modifier),
         shape = RoundedCornerShape(12.dp),
         border= BorderStroke(
             width = 1.dp,
