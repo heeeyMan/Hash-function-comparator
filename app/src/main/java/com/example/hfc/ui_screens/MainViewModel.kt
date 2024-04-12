@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 class MainViewModel(
     private val model: IMainModel
 ): ViewModel() {
-    val multipliers = arrayOf(1, 10, 100, 1000, 10000)
+    val multipliers = arrayOf(1, 10, 100, 1000)
     val serviceTypes = ServiceTypes.entries.toTypedArray()
     private val _inputText = MutableStateFlow("")
     val inputText: StateFlow<String> = _inputText
