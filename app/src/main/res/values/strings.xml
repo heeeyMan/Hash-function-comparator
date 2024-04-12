@@ -1,11 +1,15 @@
 <resources>
     <string name="app_name">HFC</string>
-    <string name="cpp_time">Время C++,нс</string>
-    <string name="kotlin_time">Время Kotlin,нс</string>
-    <string name="input_text_placeholder">Введите message для hash функции</string>
-    <string name="calculate_button_text">Рассчитать скорость функции</string>
+    <string name="cpp_time">Время C++, нс</string>
+    <string name="kotlin_time">Время Kotlin, нс</string>
+    <string name="input_text_placeholder">Введите хешируемое значение</string>
+    <string name="calculate_button_text">Измерить время работы хеш функции</string>
     <string name="current_service">Действующий сервис</string>
     <string name="current_multiplier">Действующий множитель</string>
     <string name="multiplier_value">Множитель равен: %1$s </string>
     <string name="count_elements">Количество символов: %1$s </string>
+
+    <string name="cpp_name">C++</string>
+    <string name="kotlin_name">Kotlin</string>
+    <string name="kotlin_and_cpp_name">Kotlin &amp; C++</string>
 </resources>

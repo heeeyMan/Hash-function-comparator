@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -34,12 +35,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -84,13 +88,13 @@ fun MainScreen(viewModel: MainViewModel) {
             multipliers = viewModel.multipliers,
             changeMultiplier = {viewModel.changeMultiplier(it)}
         )
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = stringResource(id = R.string.current_service),
             color = Color.Black,
             fontWeight = FontWeight.Bold
         )
-        Spacer(modifier = Modifier.height(10.dp))
-        CustomExposedDropdownMenuBox(
+        ServiceExposedDropdownMenuBox(
             currentServiceType = viewModel.currentServiceType,
             serviceTypes = viewModel.serviceTypes,
             changeCurrentServiceType = {viewModel.changeServiceType(it)}
@@ -213,9 +217,9 @@ fun MultiplierExposedDropdownMenuBox(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun CustomExposedDropdownMenuBox(
+fun ServiceExposedDropdownMenuBox(
     currentServiceType: StateFlow<ServiceTypes>,
     serviceTypes: Array<ServiceTypes>,
     changeCurrentServiceType: (type: ServiceTypes) -> Unit,
@@ -231,15 +235,17 @@ fun CustomExposedDropdownMenuBox(
                 expanded = !expanded
             }
         ) {
+            val keyboardController = LocalSoftwareKeyboardController.current
             TextField(
-                value = selectedText.valueName,
+                value = stringResource(id = selectedText.valueNameId),
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier.menuAnchor(),
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.None
-                )
+                modifier = Modifier
+                    .menuAnchor(),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done, keyboardType = KeyboardType.Text),
+                keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }),
+                singleLine = true
             )
 
             ExposedDropdownMenu(
@@ -248,11 +254,15 @@ fun CustomExposedDropdownMenuBox(
             ) {
                 serviceTypes.forEach { item ->
                     DropdownMenuItem(
-                        text = { Text(text = item.valueName) },
+                        text = { Text(text = stringResource(id = item.valueNameId)) },
                         onClick = {
                             changeCurrentServiceType(item)
                             expanded = false
-                            Toast.makeText(context, item.valueName, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                context.getString(item.valueNameId),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     )
                 }
@@ -306,12 +316,11 @@ fun StaticTextField(
             fontWeight = FontWeight.Light,
             color = Color.DarkGray,
         )
-        Spacer(modifier = Modifier.height(5.dp))
         Box(modifier = Modifier
             .heightIn(min = 80.dp)
             .wrapContentHeight()
             .fillMaxWidth()
-            .padding(10.dp)
+            .padding(horizontal = 10.dp)
             .background(
                 color = Color.LightGray,
                 shape = RoundedCornerShape(12.dp)
