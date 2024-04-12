@@ -9,13 +9,20 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.hfc.models.MainModel
 import com.example.hfc.service.CalculateTimeCppService
 import com.example.hfc.service.CalculateTimeKotlinService
 import com.example.hfc.ui.theme.HFCTheme
 import com.example.hfc.ui_screens.MainScreen
 import com.example.hfc.ui_screens.MainViewModel
+import com.example.hfc.ui_screens.SplashScreen
+import com.example.hfc.utils.Constanst.MAIN_DESTINATION
+import com.example.hfc.utils.Constanst.SPLASH_DESTINATION
 
 class MainActivity : ComponentActivity() {
 
@@ -30,7 +37,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen(viewModel)
+                    NavigationApp()
                 }
             }
         }
@@ -54,5 +61,14 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
         unbindService(viewModel.getKotlinServiceConnection())
         unbindService(viewModel.getCppServiceConnection())
+    }
+
+    @Composable
+    fun NavigationApp() {
+        val navController = rememberNavController()
+        NavHost(navController = navController, startDestination = SPLASH_DESTINATION) {
+            composable(SPLASH_DESTINATION) { SplashScreen(navController = navController) }
+            composable(MAIN_DESTINATION) { MainScreen(viewModel) }
+        }
     }
 }

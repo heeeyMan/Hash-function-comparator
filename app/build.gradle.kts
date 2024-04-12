@@ -73,10 +73,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    //openssl
-    implementation (libs.openssl)
-    implementation(libs.cryptography.core)
-    implementation(libs.cryptography.provider.jdk)
+    // navigation
+    implementation(libs.androidx.navigation.compose)
     // tests
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
