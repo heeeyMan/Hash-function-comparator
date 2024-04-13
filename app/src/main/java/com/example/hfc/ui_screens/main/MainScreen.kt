@@ -14,13 +14,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
@@ -40,7 +42,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -63,61 +64,61 @@ import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
-    LazyColumn(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White),
+            .background(Color.White)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        item {
-            Spacer(modifier = Modifier.height(35.dp))
-            TableResult(
-                timeCppData = viewModel.workingCppTimeText,
-                timeKotlinData = viewModel.workingKotlinTimeText,
-                isShowCppProgressBar = viewModel.isShowCppProgressBar,
-                isShowKotlinProgressBar = viewModel.isShowKotlinProgressBar
-            )
-            Spacer(modifier = Modifier.height(15.dp))
-            Counter(
-                textState = viewModel.inputText,
-                multiplierState = viewModel.currentMultiplier,
-                isPrepareState = viewModel.isPrepareState
-            )
-            InputEditText(
-                inputTextState = viewModel.inputText,
-                changeInputText = {viewModel.changeInputText(it)}
-            )
-            Spacer(modifier = Modifier.height(15.dp))
-            Text(
-                text = stringResource(id = R.string.current_multiplier),
-                color = Color.Black,
-                fontWeight = FontWeight.Bold
-            )
-            MultiplierExposedDropdownMenuBox(
-                currentMultiplier = viewModel.currentMultiplier,
-                multipliers = viewModel.multipliers,
-                changeMultiplier = {viewModel.changeMultiplier(it)}
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = stringResource(id = R.string.current_service),
-                color = Color.Black,
-                fontWeight = FontWeight.Bold
-            )
-            ServiceExposedDropdownMenuBox(
-                currentServiceType = viewModel.currentServiceType,
-                serviceTypes = viewModel.serviceTypes,
-                changeCurrentServiceType = {viewModel.changeServiceType(it)}
-            )
-            Spacer(modifier = Modifier.height(25.dp))
-            CalculateButton(
-                isKotlinActiveState = viewModel.isShowKotlinProgressBar,
-                isCppActiveState = viewModel.isShowCppProgressBar,
-                isPrepareState = viewModel.isPrepareState
-            ) {
-                viewModel.getTimeHashFunction()
-            }
+        Spacer(modifier = Modifier.height(35.dp))
+        TableResult(
+            timeCppData = viewModel.workingCppTimeText,
+            timeKotlinData = viewModel.workingKotlinTimeText,
+            isShowCppProgressBar = viewModel.isShowCppProgressBar,
+            isShowKotlinProgressBar = viewModel.isShowKotlinProgressBar
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Counter(
+            textState = viewModel.inputText,
+            multiplierState = viewModel.currentMultiplier,
+            isPrepareState = viewModel.isPrepareState
+        )
+        InputEditText(
+            inputTextState = viewModel.inputText,
+            changeInputText = {viewModel.changeInputText(it)}
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            text = stringResource(id = R.string.current_multiplier),
+            color = Color.Black,
+            fontWeight = FontWeight.Bold
+        )
+        MultiplierExposedDropdownMenuBox(
+            currentMultiplier = viewModel.currentMultiplier,
+            multipliers = viewModel.multipliers,
+            changeMultiplier = {viewModel.changeMultiplier(it)}
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            text = stringResource(id = R.string.current_service),
+            color = Color.Black,
+            fontWeight = FontWeight.Bold
+        )
+        ServiceExposedDropdownMenuBox(
+            currentServiceType = viewModel.currentServiceType,
+            serviceTypes = viewModel.serviceTypes,
+            changeCurrentServiceType = {viewModel.changeServiceType(it)}
+        )
+        Spacer(modifier = Modifier.height(25.dp))
+        CalculateButton(
+            isKotlinActiveState = viewModel.isShowKotlinProgressBar,
+            isCppActiveState = viewModel.isShowCppProgressBar,
+            isPrepareState = viewModel.isPrepareState
+        ) {
+            viewModel.getTimeHashFunction()
         }
+        Spacer(modifier = Modifier.imePadding())
     }
 }
 
@@ -232,7 +233,7 @@ fun MultiplierExposedDropdownMenuBox(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ServiceExposedDropdownMenuBox(
     currentServiceType: StateFlow<ServiceTypes>,
