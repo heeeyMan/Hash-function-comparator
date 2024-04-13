@@ -1,4 +1,4 @@
-package com.example.hfc.ui_screens
+package com.example.hfc.ui_screens.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
